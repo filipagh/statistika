@@ -1,0 +1,13 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+uloha
+Filip Agh
+
+nacitat dataset do R
+```{r}
+meteo <- read.csv(file = '/home/filipa/meteo_public_meteo.csv')
+meteo
+
+```

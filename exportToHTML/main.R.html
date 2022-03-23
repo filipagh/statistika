@@ -1,0 +1,71 @@
+<html>
+<head>
+<title>main.R</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+.s1 { color: #6897bb;}
+.s2 { color: #cc7832;}
+.s3 { color: #6a8759;}
+.s4 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.R</font>
+</center></td></tr></table>
+<pre><span class="s0">v1 &lt;- c(</span><span class="s1">2</span><span class="s2">,</span><span class="s1">1</span><span class="s2">,</span><span class="s1">0</span><span class="s2">,</span><span class="s1">4</span><span class="s2">,</span><span class="s0">-</span><span class="s1">3</span><span class="s0">)</span>
+<span class="s0">v2 &lt;- c(-</span><span class="s1">2</span><span class="s2">,</span><span class="s1">3</span><span class="s2">,</span><span class="s1">4</span><span class="s2">,</span><span class="s1">5</span><span class="s2">,</span><span class="s1">6</span><span class="s0">)</span>
+
+<span class="s0">length(v1)</span>
+<span class="s0">sum(v1)</span>
+<span class="s0">cumsum(v1)</span>
+<span class="s0">prod(v1)</span>
+<span class="s0">v1/v2</span>
+<span class="s0">v1%*%v2</span>
+<span class="s0">cos(pi*v1)</span>
+<span class="s0">cospi(v1)</span>
+<span class="s0">(v3 &lt;- seq(from=</span><span class="s1">1</span><span class="s2">,</span><span class="s0">to=</span><span class="s1">20</span><span class="s2">,</span><span class="s0">by=</span><span class="s1">2</span><span class="s0">))</span>
+<span class="s0">v3</span>
+<span class="s0">print(v3)</span>
+<span class="s0">(v4 &lt;-rep(c(</span><span class="s1">1</span><span class="s2">,</span><span class="s1">3</span><span class="s2">,</span><span class="s1">2</span><span class="s0">)</span><span class="s2">,</span><span class="s0">times=</span><span class="s1">4</span><span class="s0">))</span>
+<span class="s0">(v5 &lt;-rep(c(</span><span class="s1">1</span><span class="s2">,</span><span class="s1">3</span><span class="s2">,</span><span class="s1">2</span><span class="s0">)</span><span class="s2">,</span><span class="s0">times=c(</span><span class="s1">1</span><span class="s2">,</span><span class="s1">2</span><span class="s2">,</span><span class="s1">4</span><span class="s0">)))</span>
+
+<span class="s0">A &lt;- matrix(v4</span><span class="s2">,</span><span class="s1">4</span><span class="s2">,</span><span class="s1">3</span><span class="s0">)</span>
+<span class="s0">A</span>
+<span class="s0">B &lt;- matrix(v4</span><span class="s2">, </span><span class="s1">4</span><span class="s2">,</span><span class="s1">3</span><span class="s2">, </span><span class="s0">byrow=TRUE)</span>
+<span class="s0">B</span>
+
+
+<span class="s0">studium = factor(c(</span><span class="s1">1</span><span class="s2">,</span><span class="s1">0</span><span class="s2">,</span><span class="s1">0</span><span class="s2">,</span><span class="s1">1</span><span class="s2">,</span><span class="s1">1</span><span class="s0">)</span><span class="s2">, </span><span class="s0">labels = c(</span><span class="s3">&quot;ib&quot;</span><span class="s2">, </span><span class="s3">&quot;it&quot;</span><span class="s0">))</span>
+<span class="s0">studium</span>
+<span class="s0">vek &lt;- c(</span><span class="s1">18</span><span class="s2">,</span><span class="s1">21</span><span class="s2">,</span><span class="s1">20</span><span class="s2">,</span><span class="s1">22</span><span class="s2">,</span><span class="s1">19</span><span class="s0">)</span>
+<span class="s0">meno &lt;- c(</span><span class="s3">&quot;ivo&quot;</span><span class="s2">, </span><span class="s3">&quot;ema&quot;</span><span class="s2">, </span><span class="s3">&quot;ada&quot;</span><span class="s2">, </span><span class="s3">&quot;jan&quot;</span><span class="s2">, </span><span class="s3">&quot;eva&quot;</span><span class="s0">)</span>
+
+<span class="s0">studenti &lt;- data.frame(meno</span><span class="s2">, </span><span class="s0">vek</span><span class="s2">, </span><span class="s0">studium)</span>
+<span class="s0">studenti</span>
+
+<span class="s0">studenti$byt &lt;- c(</span><span class="s3">&quot;i&quot;</span><span class="s2">,</span><span class="s3">&quot;i&quot;</span><span class="s2">,</span><span class="s3">&quot;d&quot;</span><span class="s2">,</span><span class="s3">&quot;d&quot;</span><span class="s2">,</span><span class="s3">&quot;i&quot;</span><span class="s0">)</span>
+<span class="s0">studenti$body &lt;- c(</span><span class="s1">5</span><span class="s2">,</span><span class="s1">15</span><span class="s2">,</span><span class="s1">20</span><span class="s2">,</span><span class="s1">18</span><span class="s2">,</span><span class="s1">7</span><span class="s0">)</span>
+<span class="s0">studenti</span>
+
+<span class="s4"># iba studen &quot;ib&quot;</span>
+<span class="s4"># vyber studnetov co maju viac ako 10 b z pisomky</span>
+<span class="s4"># vyber iba &quot;ib&quot; a mladsich ako 20</span>
+
+<span class="s0">it &lt;- subset(studenti</span><span class="s2">, </span><span class="s0">studium == </span><span class="s3">&quot;ib&quot;</span><span class="s0">)</span>
+<span class="s0">it &lt;- subset(studenti</span><span class="s2">, </span><span class="s0">studenti$studium == </span><span class="s3">&quot;ib&quot;</span><span class="s0">)</span>
+<span class="s0">it</span>
+
+<span class="s0">v10 &lt;- subset(studenti</span><span class="s2">, </span><span class="s0">studenti$body &gt; </span><span class="s1">10</span><span class="s0">)</span>
+<span class="s0">v10</span>
+
+<span class="s0">ibm20 &lt;- subset(studenti</span><span class="s2">, </span><span class="s0">studenti$studium == </span><span class="s3">&quot;ib&quot; </span><span class="s0">&amp; studenti$vek &lt; </span><span class="s1">20</span><span class="s0">)</span>
+<span class="s0">ibm20</span>
+
+<span class="s0">data(Cars93)</span>
+</pre>
+</body>
+</html>

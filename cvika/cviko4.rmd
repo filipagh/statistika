@@ -1,0 +1,114 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# interval spolahlivosti pre paemetre normalneho rozdelenia
+alfa - signific level
+alfa = 0.05 --- 5% chyba
+
+(1-alfa) 95% interval spravnosti
+
+priklad
+kopirke je nutne vymenit toner priemerne
+po 2500 skopirovanych stranach  smerodajna odchylka je 30 stran, namerane udaje o pocte spokiprovanych stran a vymene tonera
+
+```{r}
+x <- c(2445, 2450, 2453, 2462, 2463, 2463, 2466, 2471, 2474, 2475, 2475,
+       2484, 2485, 2486, 2487, 2490, 2491, 2493, 2499, 2501, 2501, 2503,
+       2504, 2505, 2505, 2506, 2506, 2507, 2509, 2511, 2511, 2513, 2514,
+       2515, 2518, 2523, 2523, 2524, 2525, 2527, 2529, 2530, 2530, 2533,
+       2535, 2536, 2537, 2539, 2560, 2571)
+
+# interval spolahlivosti pre strednu hodnotu mu ak sigmu pozname
+# obojstranyy a 95% IS (interval spolahlivosti) podla VZORCA
+
+alfa <- 0.05
+mi <- mean(x)
+sigma <- 30
+n <- length(x)
+IS <- mi+c(-1,1)*qnorm(1-alfa/2,0,1)*sigma/sqrt(n)
+IS
+int <- c(lower=IS[1], mean=mi,upper=IS[2])
+int
+
+# lavoseanny pravostranny podla vzorca 95%
+ISL <- c(mi-qnorm(1-alfa,0,1)*sigma/sqrt(n),Inf)
+ISL
+ISR <- c(-Inf,mi-qnorm(1-alfa,0,1)*sigma/sqrt(n))
+ISR
+# vypocitajte obojstrany, lavo pravostranny IS 95%
+IS <- mi+c(-1,1)*qt(1-alfa/2,n-1)*sd(x)/sqrt(n)
+IS
+ISL <- c(mi-qt(1-alfa,n-1)*sd(x)/sqrt(n),Inf)
+ISL
+ISR <- c(-Inf,mi-qt(1-alfa,n-1)*sd(x)/sqrt(n))
+ISR
+# vypocet s libkami ak sigmu nepozname
+#t test sluzi aj na potvrdenie hypotez
+t.test(x)
+# 95% IS
+t.test(x)$conf.int
+# zmena alfa vypocitaj 90 %
+t.test(x,conf.level = 0.9)$conf.int
+#pravostranny lavostranny
+t.test(x,alternative = "less") # pravostranny
+t.test(x,alternative = "greater") # lavosranny
+install.packages("DescTools")
+# if (!require("remotes")) install.packages("remotes")
+# remotes::install_github("AndriSignorell/DescTools")
+# library(DescTool)
+library(AndriSignorell/DescTools)
+MeanCI(x)
+MeanCI(x,conf.level = 0.9,sides = "left")
+MeanCI(x,conf.level = 0.9,sides = "right")
+library(Rmisc)
+CI(x)
+library(readxl)
+data <- readxl::read_xlsx("/home/filipa/IdeaProjects/stat/cvika/dataE.xlsx")
+data
+group.CI(data$mprij~data$pohlavie,data)
+group.CI(mprij~vzdelanie,data)
+group.CI(mprij~pohlavie+vzdelanie,data)
+
+
+```
+
+```{r}
+k <- 0
+for (i in 1:100) {
+  a <- rnorm(30, 0, 1);
+  is <- t.test(a)$conf.int;
+  if (0 <= is[1]) {
+    k <- k + 1;
+  }
+  if (0 >= is[2]) {
+    k <- k + 1;
+  }
+}
+
+# interval normalneho rozdelenia pre sigma
+# zostrijime 95% IS pre data z 1. prikaldu
+# obojstrane aj jendotranie
+# vzorcom
+IS <- c((n-1)*var(x)/qchisq(1-alfa/2,n-1),(n-1)*var(x)/qchisq(alfa/2,n-1))
+
+# tu boli este ine ciciny
+# ako ISL a ISP
+
+#priklad
+# zo 100 ludi sa dalo zaockovat 15  vakcinou ABC
+# bodoby odhad je 15/100 = 0.15vypocitajte 95% IS pr eparameter p
+prop.test(15,100)$conf.int
+# alternativne
+binom.test(15,100)$conf.int
+plot(function (x)dnorm(x,0,1),xlim = c(-3,3))
+plot(function (x)dt(x,2),from = -3, to = 3,col = "red",add = T)
+plot(function (x)dt(x,10),from = -3, to = 3,col = "red",add = T)
+plot(function (x)dt(x,100),from = -3, to = 3,col = "blue",add = T)
+
+
+
+
+
+```

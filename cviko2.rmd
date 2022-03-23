@@ -1,0 +1,179 @@
+cviko 2
+
+rozdelenia prevdepodobnosti, diskretne a spojite
+
+zakladne prikazy
+
+d -> ak p(x=i)=p_i
+
+p -> ak p(x<=i)
+
+q -> pre kvanil
+
+r -> random
+
+binomicke rozdelenie
+
+ - n => pocet pokusov nezavislych
+ - p => pravdepodobnost 1 pokusu
+
+priklad
+ucinost antibiotik je 80%
+podava sa 10 pacientom
+zratajte pravdepodobnosti:
+
+ - vseci sa vyliecia p=(x=10)
+ - 7 sa vylieci p=(x=7)
+ - najviac 8 p=(x<=8)
+ - aspon 5 p=(x>=5)
+
+
+
+```{r}
+
+dbinom(10,10,0.8)
+dbinom(7,10,0.8)
+pbinom(8,10,0.8)
+1-pbinom(4,10,0.8)
+pbinom(4,10,0.8,lower.tail = FALSE)
+```
+
+uloha:
+dabulka rozdelenia pravdepodobnosti a graf rozdelenia pravdepodobnosti
+
+```{r}
+xB <- c(0:10)
+hustotaB <- dbinom(xB,10,0.8)
+tabulkaB <- data.frame(hodnota=xB,pravdepodobnost=hustotaB)
+tabulkaB
+barplot(tabulkaB$pravdepodobnost, main = "binomicke rozdelenie",xlab = "hodnota", ylab = "pravdepodobnost", col = "red", names.arg = xB)
+```
+
+hypergeometricke rozdelenie ma tri parametre
+
+m - pocet objektov s sledovanov vlastnostou
+n - doplnok m
+k - kolko vyberam
+
+priklad
+student sa nauci na skusku 12 z 20 otazok
+test obsahuje 5 z 20
+vypocitajte pravdepodobnosti:
+
+ - student spravi skusku (aspon 3 otazky)
+ - student dostane A (5 otazok zodpovie)
+ - student nespravi skusku (menej ako 3)
+
+```{r}
+phyper(2,12,8,5, lower.tail = F) # x<2
+dhyper(5,12,8,5)
+phyper(2,12,8,5)
+```
+```{r}
+xB <- c(0:5)
+hustotaB <- dhyper(xB,12,8,5)
+tabulkaB <- data.frame(hodnota=xB,pravdepodobnost=hustotaB)
+tabulkaB
+barplot(tabulkaB$pravdepodobnost, main = "hypergeometricke rozdelenie",xlab = "hodnota", ylab = "pravdepodobnost", col = "red", names.arg = xB)
+```
+
+# Poissonovo rozdelenie
+ parameter lambda co je stredna hodnota
+
+teoria hromadnej obsluhy, zriedkave javy
+
+
+priklad
+ - na samoobsluznej linke je 20 ludi / hod
+
+vypocitajte
+ - pravdepodobnost ze za 15 min pride 1 clovek - 20/60 * 15
+ - ze za 5 min nikto nepride - 20/60 * 5
+ - ze za 10 min aspon 10 ludi - 20/60 * 10
+
+lambda sa prepocita vzhladom na casovy interval
+
+```{r}
+dpois(1,5)
+dpois(0,5/3)
+ppois(9,10/3,lower.tail = F)
+```
+vypocitame tabulku a grav rozdelenia pravdepodobnosti pre lambda = 20
+```{r}
+xP <- c(0:20)
+hustotaB <- dpois(xP, 20)
+tabulkaB <- data.frame(hodnota=xP, pravdepodobnost=hustotaB)
+tabulkaB
+barplot(tabulkaB$pravdepodobnost, main = "Poissonovo rozdelenie",xlab = "hodnota", ylab = "pravdepodobnost", col = "red", names.arg = xP)
+```
+
+
+
+zostrojte epiricku distribucnu funkciu pre 10 000 pseudonah cisiel
+
+
+```{r}
+
+
+
+data <- rpois(10000, 20)
+plot(ecdf(data))
+```
+
+# spojite rozdelenie pravepodobnosti
+odbor hodnot je interval
+
+rozdelenie pravdepodobnosti je dane hustotov pravdepodobnosti
+
+# normalne rozdelenie
+ normalne - gaussovo
+ parameter:
+  - mi - stredna hodnota
+  - sigma - smerodajna odchylka
+
+prikad:
+zivotnost bateriek do mobilu sa riadi rozdelenim so strednou hodnotou 8 rokov
+odchylkov 2 roky
+
+vypocitaj
+kolko % bateriek treba vymenit za 7,5 roka
+kolko % bateriek vydrzi 7-9 rokov
+kolko % viac ako 10 rokov
+na aku dobu zivotnosti sa mozeme zarucit na 90%
+
+```{r}
+pnorm(7.5, 8,2)
+pnorm(9,8,2) - pnorm(7,8,2)
+pnorm(10,8,2,lower.tail = F)
+qnorm(0.1, 8,2)
+qnorm(0.9, 8,2,lower.tail = F)
+```
+
+histogram a hustota normalneho N(0,1)
+
+```{r}
+xx <- rnorm(500,0,1) # pre histogram
+xxx <- seq(-3.5, 3.5,0.01)
+hist(xx, freq = F)
+lines(xxx,dnorm(xxx,0,1), col = "red")
+
+```
+
+# exponencialne rozdelenie
+jden parameter E(x)
+dlzka zivotnosti pouzivaneho pc v pocitacovej ucebni je 2 roky
+
+aka je pravepodobnost ze pc ma zivotnost aspon 1 rok
+najviac 5 rokov
+za aku zivotnost by ste sa zarucil len s p = 0,05
+```{r}
+pexp(1,1/2,lower.tail = F)
+pexp(5,1/2)
+qexp(0.05,1/2, lower.tail = F)
+```
+
+# hustota
+```{r}
+x <- 0:5
+plot(function (x)dexp(x,rate = 1))
+```

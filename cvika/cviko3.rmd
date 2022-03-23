@@ -1,0 +1,138 @@
+---
+title: "cviko 3"
+output: html_notebook
+---
+
+
+# prvotna statistika analyza popisna grafcka
+
+libky
+psych
+Hmisc
+tadaatool (nejde)
+FSA
+pastesc (nejde)
+moments
+```{r}
+library(moments)
+
+
+data <- readxl::read_xlsx("/home/filipa/IdeaProjects/stat/cvika/dataE.xlsx")
+# data
+names(data) #stlce
+dim(data) #dimenzia
+str(data)
+```
+spracujeme mprij  / mesacny prijem
+```{r}
+plat <- data$mprij
+plat
+# min, max, arit priemer, modus, median,
+# kvantily 0,25, 0.75
+min(plat)
+max(plat)
+mean(plat)
+median(plat)
+table(plat)
+prop.table(plat)
+cumsum(table(plat))
+cumsum(prop.table(plat))
+
+#ostatne func
+sort(plat)
+sort(plat)[1:10]
+sum(plat==1200)
+sum(plat>1000)
+sum(data$vek<40)
+
+# geometric.mean(plat)
+# harmonic.mean(plat)
+
+quantile(plat,0.25)
+quantile(plat,0.5)
+quantile(plat,0.75)
+
+#odhad dispeerzie, smerodajnej odchylky, variant rozpetie
+# kvartilove rozpretie IQR
+
+max(plat) - min(plat)
+range(plat)
+diff(range(plat))
+IQR(plat)
+
+# sikmost spicatost
+#normalne rozdelenie ma sikmost 0
+skewness(plat)
+# spicatost
+#normalne rozdelenie 3
+kurtosis(plat)
+hist(plat)
+
+# simulujeme normalne rozdelenie, mi=1,0.01,20
+# zdratame charakteristiky
+pomoc <- rnorm(10000, 0,1)
+skewness(pomoc)
+kurtosis(pomoc)
+pomoc <- rnorm(10000, 0,0.01)
+skewness(pomoc)
+kurtosis(pomoc)
+pomoc<- rnorm(10000,0,20)
+skewness(pomoc)
+kurtosis(pomoc)
+
+# simulujeme data z chi kvadrat rozdelenie zratajme skimost
+
+pomoc <- rchisq(10000,5)
+skewness(pomoc)
+kurtosis(pomoc)
+hist(pomoc)
+# sumarne stat
+summary(plat)
+# a<-describe(plat)
+# a
+# Summarize(plat)
+
+#charakteristiky na podmnozinach
+tapply(plat,data$pohlavie, mean)
+tapply(plat,data$pohlavie,summary)
+
+# graficka analyza kniznice
+library(ggplot2)
+# library(car)
+library(carData)
+# library(vioplot)
+library(MASS)
+library(RColorBrewer)
+
+library(lattice)
+histogram(plat)
+hist(plat,breaks = "sturges",col = "red", main = "histogram", xlab = "prijem", ylab = "pocetnost", freq = F)
+# library(graphic)
+# lines(density(plat),col = "red")
+
+muzi <- subset(plat,data$pohlavie=="m")
+zeny <- subset(plat,data$pohlavie=="z")
+par(mfrow=c(1,2))
+hist(muzi,breaks = "sturges",col = "red", main = "histogram", xlab = "prijem", ylab = "pocetnost", freq = F)
+# lines(density(plat),col = "red")
+
+hist(zeny,breaks = "sturges",col = "red", main = "histogram", xlab = "prijem", ylab = "pocetnost",  freq = F)
+# lines(density(plat),col = "red")
+
+par(mfrow=c(1,1))
+
+# krabicove grafy boxplot
+boxplot(plat,col = "lightgreen", xlab = "prijem", main = "boxplot" )
+boxplot(plat~data$pohlavie,col = c("lightgreen","red"), xlab = "prijem", main = "boxplot" )
+boxplot(plat~data$vzdelanie,col = c("lightgreen","red"), xlab = "prijem", main = "boxplot" )
+boxplot(plat~data$pohlavie+data$vzdelanie,col = c("lightgreen","red"), xlab = "prijem", main = "boxplot" )
+boxplot(plat~data$vzdelanie+data$pohlavie,col = c("lightgreen","red"), xlab = "prijem", main = "boxplot" )
+# vioplot
+library(graphics)
+library(vioplot)
+vioplot(plat,col = "lightgreen", xlab = "prijem", main = "boxplot" )
+vioplot(plat~data$pohlavie,col = c("lightgreen","red"), xlab = "prijem", main = "boxplot" )
+vioplot(plat~data$vzdelanie,col = c("lightgreen","red"), xlab = "prijem", main = "boxplot" )
+vioplot(plat~data$pohlavie+data$vzdelanie,col = c("lightgreen","red"), xlab = "prijem", main = "boxplot" )
+vioplot(plat~data$vzdelanie+data$pohlavie,col = c("lightgreen","red"), xlab = "prijem", main = "boxplot" )
+```

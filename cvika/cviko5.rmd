@@ -1,0 +1,155 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+test hypotez pre normalne rozdelenia
+```{r}
+x <- c(2445, 2450, 2453, 2462, 2463, 2463, 2466, 2471, 2474, 2475, 2475,
+       2484, 2485, 2486, 2487, 2490, 2491, 2493, 2499, 2501, 2501, 2503,
+       2504, 2505, 2505, 2506, 2506, 2507, 2509, 2511, 2511, 2513, 2514,
+       2515, 2518, 2523, 2523, 2524, 2525, 2527, 2529, 2530, 2530, 2533,
+       2535, 2536, 2537, 2539, 2560, 2571)
+js <- c(495.2,496.8,502.1,498.5,501,503,500.7,
+        501.5,501.8,499.1,500.9,502.2,501.7, 500.4,
+        500.2,501.1,499.9,500.2,501.1,500.8,499.3)
+bat <- c(12,19,16,11,7,12,14,18,15,19,17,19,13,9,11,20,12,19,8,13)
+bat1 <- c(20.2,19.6,18.6,19.4,17,18.5,18,18.4,19,18,17.9,18.1)
+pizza <- c(27,28,35,36,29,24,30,26,28,32,
+           24,32,31,29,28,29,35,34,30,31)
+pred <- c(87,61,98,90,93,74,83,72,81,75,83)
+po <- c(50,45,79,90,88,65,52,79,84,61,52)
+
+# mi = mu = stredna hodnota
+# test pre strednu hodnotu mi ak sigmi pozname
+# zadanie vyroba uvadza ze kopirke je nutne vymenit toner priemerne po 2500 stranach so smerodajnov odchylkou 30
+# poscas roka boli namerane tieto udaje o pocte skopirovanych stran do vymeny tonera
+# na hladine alfa 0,05 testujte hypotezu ze tvrdenie je pravdive
+
+# tvrdenie o strednej hodnote
+# data su normalne rozdelene
+# h0 mi 2500
+# h1 mi != 2500
+# alfa = 0.05
+# pvalue <= alfa -> zamietam h0
+
+mi0 <- 2500
+alfa <- 0.05
+mean <- mean(x)
+sigma <- 30
+n <- length(x)
+T <- (mean-mi0)*sqrt(n)/sigma
+T
+qnormResult <- qnorm(0.975, 0.1)
+kvantil <- abs(T) >= qnormResult
+if(kvantil) print("zamietam h0") else print("nezamietam h0")
+
+# nezamietam h0 tvrdenie o pocte skopirovanych stran
+
+# prikazom R kniznica DescTools
+library(DescTools)
+ZTest(x,mu = mi0,sd_pop = sigma)
+ZTest(x,mu = mi0,sd_pop = sigma)$p.value
+# p = 0,44
+# p > alfa -> nezamietam h0
+
+plot(function (x) dnorm(x),from = -4,to = 4, main = "kriticka oblast testu", ylab = "hustota")
+abline(v=T,col='blue')
+abline(v=qnormResult,col='red')
+abline(v=-qnormResult,col='red')
+
+# kedze tento test sa pouziva malo tak jednostranne alternativy
+# dalsie priklady
+#  test pre strednu hodnotu mi ak sigmu nepozname
+# rieste tu istu ulohu ak sigmu nepozname
+
+mi0 <- 2500
+alfa <- 0.05
+mean <- mean(x)
+
+t.test(x,mu= mi0)
+t.test(x,mu= mi0)$p.value
+# p > alfa => h0 nezamietam
+
+# zmena hladiny vyznamnosti
+# mala firma predava 100% bio jablkovu stavu v baleniach 0,5 l po oprave plniacej linky boli namerane tieto jednotky objemu v ml
+# na hladine vyznamnosti alfa 0,1 testujjte hypotezu ze baliacia linka je dobre nastavena
+# h0 mi = 500
+# h1 mi != 500
+# alfa = 0.1
+t.test(js,mu=500,conf.level = 1-0.1)$p.value
+# t.test(js,mu=500,conf.level = 1-0.1)
+# t.test(js,mu=500,conf.level = 0.0001)
+# t.test(js,mu=500,conf.level = 0.9)
+t.test(js,mu=500)$p.value
+# p > alfa h0 nezamietam
+
+# priklad na alternativy greater a less
+# firma ktora robi baterky do ntb, jednu vyrobi za 13 min
+# overte toto tvrdenie ak mame k dispozicii 20 merani
+# alfa = 0.05
+# tvar alternativnej hyp je
+# mi = 13
+# h0 <= mi
+# h1 > mi
+
+t.test(bat,mu = 13, alternative = "greater")
+# phodota > alfa teda h0 nezamietam tvrdenie je pravdive
+
+# priklad less
+# firma nakupuje bat vyrobca garantuje bat vydrz 19 hod cinosti
+# alfa = 0.05
+t.test(bat1,mu = 19, alternative = "less")
+#  p hodnota je > alfa h0 nezamietam
+
+# pizzeria dovezie pizzu do 30 min na alfa 0.05 potvrdte
+# mi = 30
+# h0 <= 30
+# h1 >30
+
+t.test(pizza,mu=30,alternative = "greater")
+# p > alfa  h0 nezamietame
+
+# testy pre disperziu
+# h0 sigma**2 = sigma0**2
+
+# v prvom pripade vyrobca tvrdi ze smerodajna odchylka je 30 (sigma) na alfa = 0.05
+# testujte hypotezu ze tvrdenie o disperzii je pravdive
+# h0 sigma**2 = sigma0**2
+# h1 sigma**2 != sigma0**2
+
+library(EnvStats)
+varTest(x,sigma.squared=30^2)
+varTest(x,sigma.squared=30^2)$p.value
+# p > alfa nezamieame h0
+
+
+
+# dvojvyberove testy
+# parove testy (zavysle)
+# neparove testy (nezavisle)
+
+# h0 mix = miy
+# h0 mix - miy = 0 (ci je zmena)
+# h0 mix - miy = delta (ci je o velkost delta)
+
+# parove testy
+# su dane casy v sec riesenia ulohy
+# pred a po cviceni
+# zlepsi sa cas po cviceni?
+
+# h0 pred - po  = 0 (pred - po >= 0) (( >=  ->  = je iba formalny zapis))
+# h1 pred-po < 0
+boxplot(pred,po)
+t.test(pred,po,alternative = "l",paired = T)
+# h0 nezamietame
+
+
+
+
+
+
+
+
+
+```

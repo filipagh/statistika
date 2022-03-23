@@ -1,0 +1,50 @@
+---
+title: "DU3"
+output: html_notebook
+author: "Filip agh"
+---
+
+```{r}
+library('ggplot2')
+library('dplyr')
+library('moments')
+library("vioplot")
+d <- diamonds
+d <- sample_n(diamonds, 100)
+
+# atribut som si zvolil "carat"
+summary(d$price)
+summary(d$carat)
+IQR(d$price)
+IQR(d$carat)
+skewness(d$price)
+skewness(d$carat)
+kurtosis(d$price)
+kurtosis(d$carat)
+table(d$price)
+table(d$carat)
+prop.table(d$price)
+prop.table(d$carat)
+cumsum(table(d$price))
+cumsum(table(d$carat))
+cumsum(prop.table(d$price))
+cumsum(prop.table(d$carat))
+
+par(mfrow = c(1,2))  # rozdelime obrazovky na 2 okna
+hist(d$price)
+hist(d$carat)
+
+boxplot(d$price,main = "price" )
+boxplot(d$carat, main = "carat")
+
+par(mfrow = c(1,1))
+boxplot(d$price~d$carat)
+par(mfrow = c(1,2))
+
+vioplot(d$price,main = "price" )
+vioplot(d$carat, main = "carat")
+par(mfrow = c(1,1))
+vioplot(d$price~d$carat)
+
+
+```

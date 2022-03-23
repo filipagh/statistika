@@ -1,0 +1,57 @@
+---
+title: "R Notebook DU2"
+author: "Filip Agh"
+output: html_notebook
+---
+# zadanie:
+Zadanie
+Za istých podmienok (vyhľadajte) možno hypergeometrické rozdelenie aproximovať binomickým rozdelením.
+
+1. Majme balíček kariet, náhodne vyberieme 5 kariet. Aká je pravdepodobnosť, že sme
+vytiahli dve esá?
+2. Majme 10 balíčkov kariet, náhodne vyberieme 5 kariet. Aká je pravdepodobnosť, že
+sme vytiahli dve esá?
+
+Riešte tieto úlohy binomickým a hypergeometrickým rozdelením, porovnajte rozdiely.
+Zostrojte graf rozdelenia pravdepodobnosti (binomického a hypergeometrického) pre prvú a
+druhú úlohu. Porovnajte rozdiely
+
+info hracie karty
+pocet 54 (2x zolik, 4x eso)
+
+## uloha 1
+
+```{r}
+dbinom(2, 5, 4 / 54)
+dhyper(2, 4, 54 - 4, 5)
+
+xB <- c(0:4)
+hustotaB <- dbinom(xB, 5, 4 / 54)
+hustota2 <- dhyper(xB, 4, 54 - 4, 5)
+tabulka <- data.frame(hodnota = xB, pravdepodobnost = hustotaB, hypgeo = hustota2)
+collnames <- c('binomicke', 'hypergeometricke')
+colcolor <- c('red','blue')
+barplot(t(tabulka[c('pravdepodobnost', 'hypgeo')]), beside = T, main = "uloha 1 rozdelenie", xlab = "hodnota", ylab = "pravdepodobnost", names.arg = xB, col = colcolor, legend.text = collnames, args.legend = list(text.col=colcolor,col=colcolor))
+
+
+```
+
+## uloha 2
+```{r}
+dbinom(2, 5, 40 / 540)
+dhyper(2, 40, 540 - 40, 5)
+
+
+
+xB <- c(0:4)
+hustotaB <- dbinom(xB, 5, 40 / 540)
+hustota2 <- dhyper(xB, 40, 540 - 40, 5)
+tabulka <- data.frame(hodnota = xB, pravdepodobnost = hustotaB, hypgeo = hustota2)
+collnames <- c('binomicke', 'hypergeometricke')
+colcolor <- c('red','blue')
+barplot(t(tabulka[c('pravdepodobnost', 'hypgeo')]), beside = T, main = "uloha 2 rozdelenie", xlab = "hodnota", ylab = "pravdepodobnost", names.arg = xB, col = colcolor, legend.text = collnames, args.legend = list(text.col=colcolor,col=colcolor))
+
+
+```
+# porovnanie rozdielov
+v pripade malej pocetnosti sa pravdepodobnost nezhoduje, naopak v pripade velkej pocetnosti je velmi podobna az ju mozeme povazovat za zhodnu, rozdiel je sposobeny principialnym rozdielom tychto rozdeleni, kde hypergeometricke je odvisle od predoslich pokusov ale binomicke nezohladnije pokusy a ma konstantnu pravdepodobnost.
