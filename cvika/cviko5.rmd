@@ -111,6 +111,13 @@ t.test(pizza,mu=30,alternative = "greater")
 # p > alfa  h0 nezamietame
 
 # testy pre disperziu
+
+# POZOR
+# sigma
+# variacia je sigma bez mocniny na 2
+# smerodajna odchylka JE umocnena na 2
+
+
 # h0 sigma**2 = sigma0**2
 
 # v prvom pripade vyrobca tvrdi ze smerodajna odchylka je 30 (sigma) na alfa = 0.05

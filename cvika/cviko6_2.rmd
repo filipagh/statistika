@@ -1,0 +1,91 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# analyza rozplylu anova
+testujeme  hypotezu ze stredne hodnty viac ako 2 tried
+sa rovaju test sa upravi na test nulovosti triediacich faktorov
+h0 = alfa_1 = ... =  alfa_i  = 0
+j1 = existuje I  a dalej neviem
+podmienkov je normalita v triedach a rovnost disperzii
+inak pouzijeme iny test (kruskall)
+data je treba faktorizovat pred pouzitim anova
+```{r}
+# testujte hypotezu ze vzdelanie (1-3) ma vplyv na vysku prijmu
+# h0 faktor vzdelanie je nulovy (statisticky nevyznamny)
+
+
+
+library(readxl)
+library(DescTools)
+library(RColorBrewer)
+library(ggplot2)
+library(ggpubr)
+
+data = read_xlsx("/home/filipa/IdeaProjects/stat/cvika/dataE.xlsx")
+data$vzdelanie
+
+vzdelanie = factor(data$vzdelanie) # FAKTORIZOVANIE
+vzdelanie1 = subset(data,data$vzdelanie==1)
+vzdelanie2 = subset(data,data$vzdelanie==2)
+vzdelanie3 = subset(data,data$vzdelanie==3)
+
+# test normality a rovnosti disperzii
+shapiro.test(vzdelanie1$mprij)$p.value
+# vzdelanie 1 je normalne rozdeleny subor
+tapply(data$mprij,data$vzdelanie,shapiro.test)
+#rovnost disperzie v triedach  bartlett test
+bartlett.test(data$mprij,vzdelanie)
+# 0.59 > 0.05 nezamietam h0 rozdelenie disprezie je rovnake
+# idmee testovat neskor vizualizovat
+anova = aov(data$mprij~vzdelanie)
+summary(anova)
+# p hodnota je < 0.05 zamietam h0 o nulovosti aktora, vzdelanie je  statisticky vyznamny a ma vpliv na prijem
+# zaujima nas ktore triedy su odlisne nasleduju post testy
+tpt = TukeyHSD(anova)
+tpt
+plot(tpt)
+
+# zaver testom a graficky
+# vyzname rozdieli su 2-3 3-1
+# triedy 1-2 mozeme pvazovat za rovnake
+
+spt = ScheffeTest(anova)
+spt
+plot(spt)
+
+#  grafica analyza vhodne este pred vypoctom
+boxplot(data$mprij~vzdelanie,col = c("red","green","blue"),ylab = "prijem",main = "prijem vzhladom na vzdelanie")
+
+library(vioplot)
+vioplot(data$mprij~vzdelanie,col = c("red","green","blue"),ylab = "prijem",main = "prijem vzhladom na vzdelanie")
+
+
+prijem = data$mprij
+vzdelanie = data$vzdelanie
+pomoc = data.frame(vzdelanie,prijem)
+ggline(pomoc,x="vzdelanie",y="prijem",add=c("mean_se","jitter","violin"))
+
+# dvojfaktorva anlyza rozptylu
+# merania sa rozdeluju do podmnozin podla 2 faktorov
+# testujeme 2 hypotezy prvy faktor je nulovy a ze 2. fakto rje nulovy
+# zatial neuvazujeme interakcie
+
+# treba overit podmienky normality tried a rovnost disperzii
+# predpokladame ze platia TERAZ
+
+# priklad
+# meranie DEG v labaku foktori su laborant (3) a pristroje chromotogtaf (4)
+data = read_xlsx("/home/filipa/IdeaProjects/stat/cvika/anova2.xlsx")
+laborant = factor(data$laborant)
+pristroj = factor(data$pristroj)
+
+anova_laborant = aov(data$deg~laborant+pristroj)
+summary(anova_laborant)
+# oba faktory su nenulove a teda statisticky vyznamne a maju vplyv na vysledok merania
+
+tpt = TukeyHSD(anova_laborant)
+tpt
+plot(tpt)
+```

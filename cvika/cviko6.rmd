@@ -1,0 +1,44 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+# dvojvyberove neparove test pre neparove testy
+
+# ako prve je treba overit rovnost disperzii podla vysledku postupujeme dalej
+# neparovy test rovnost disperzii
+# dva druhy plastickej hmoty sme vystavili svetlu na 6 mesiacov
+# vysledky su dane v dnoch
+# preferujeme 1. druh testujte hypotezu o rovnakej odolnosti voci svetlu
+
+# testovat musime rovnost disperzii
+
+# h0 sigma_x=sigma_y
+# sigma_x / sigma_y = 1
+
+prvy<-c(85,87,92,80,84,86)
+druhy <- c(89,89,90,84,92)
+var.test(prvy,druhy)$p.value
+# varTest(c(prvy,druhy))$p.value # toto je zle
+# p > 0,05 nezmietame h0 cize disperzie su rovne
+
+t.test(prvy,druhy,paired = F,var.equal = T)$p.value
+# 0.17 > 0.05 nezamietam hypotezu
+# stredne hodnoty odolnosti su rovnake
+
+# test nerovnosti disperzii
+# firmakupuje rukavice od 2 dodovatelov
+# dodacia doba je v dnoch
+# testujte hypot. na rovnaku dlzku dodavok
+
+aa <- c(10, 12, 15, 25, 18, 20, 15, 25, 30)
+bb <- c(15, 15, 18, 10, 16, 12, 15)
+var.test(aa,bb)$p.value
+# 0.03<0.05 zamietam o rovnosti disperzii zvolim spravny dojvyberovy test
+t.test(aa,bb,var.equal = F)$p.value
+# 0.09 > 0.05 nezamietam h0
+boxplot(aa,bb)
+
+
+
+```

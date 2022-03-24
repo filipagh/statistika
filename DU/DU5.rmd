@@ -1,18 +1,42 @@
 ---
-title: "R Notebook"
+title: "DU5"
 output: html_notebook
+author: "Filip Agh"
 ---
 
 ```{r}
-install.packages("readxl")
 library(readxl)
+model <- read_xlsx("/home/filipa/IdeaProjects/stat/DU/modely.xlsx")
+model
 ```
-
-Type any R code in the chunk, for example:
 ```{r}
-mycars <- within(mtcars, { cyl <- ordered(cyl) })
-mycars
+par(mfrow=c(1,2))
+hist(model$MCLoAIII)
+hist(model$LoAIIIexp)
+par(mfrow=c(1,1))
+boxplot(model$MCLoAIII,model$LoAIIIexp,xlab = c("model,experiment"))
+```
+na zaklade boxplotu vidime ze experimenty dopadli lepsie a teda predpoklad je ze model by mal byt bezpecny
+
+h0 = model - experiment = 0
+h1 = model - experiment > 0
+```{r}
+t.test(model$MCLoAIII, model$LoAIIIexp, alternative = "g", paired = T)
 ```
 
-Now, click the **Run** button on the chunk toolbar to [execute](https://www.jetbrains.com/help/pycharm/r-markdown.html#run-r-code) the chunk code. The result should be placed under the chunk.
-Click the **Knit and Open Document** to build and preview an output.
+p value = 1
+cize h0 hypotezu nezamietame
+a teda model je bezpecny
+
+# priklad 2
+
+kedze ideme overit disperziu  pouzijeme varTest
+h0 sigma^2 = sigma0^2
+h1 sigma^2 != sigma0^2
+
+```{r}
+library(EnvStats)
+varTest(model$MCLoAIII,sigma.squared = 0.01^2,conf.level = 0.9)$p.value
+varTest(model$MCLoAIII,sigma.squared = 0.05^2,conf.level = 0.9)$p.value
+```
+Vysledny p hodnoty maju hodnotu 0 pre oba pripady a teda hypotezu o konzistentosti zamietame pre oba pripady.
