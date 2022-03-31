@@ -64,6 +64,7 @@
         <entry key="file://$PROJECT_DIR$/cvika/cviko6_2.rmd">
           <value>
             <RMarkdownRenderProfile>
+              <option name="lastOutput" value="$PROJECT_DIR$/cvika/cviko6_2.nb.html" />
               <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/cvika" />
             </RMarkdownRenderProfile>
           </value>
