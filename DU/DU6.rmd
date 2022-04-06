@@ -1,0 +1,83 @@
+---
+title: "du6"
+output: html_notebook
+author: Filip Agh
+---
+# priklad 1
+```{r}
+
+setwd('/home/filipa/IdeaProjects/stat/DU')
+library(readxl)
+prijem = read_xlsx("prijem.xlsx")
+dieta = read_xlsx("dieta.xlsx")
+
+# k je 3
+miesto = factor(prijem$Miesto)
+# pozrieme sa na data
+boxplot(prijem$Prijem~miesto)
+# vidime ze obec a male mesto su podobne a okresne a krajske mesto uleteli
+
+
+# overime si ci udaje su normalne rodelene
+tapply(prijem$Prijem, prijem$Miesto, shapiro.test)
+
+
+# p hodnota > 0.05 a teda udaje su normalne rozdelene
+
+#test disperzie
+
+bartlett.test(prijem$Prijem,miesto)
+#p > 0.05 rozdelenie disperzie je rovnake
+
+
+# test ci miesto je statisticky vyznamny udaj vzhladom na prijem
+#h0 miesto nie je vyznamny udaj voci primu
+#h1 miesto je vyznamny udaj voci primu
+anova = aov(prijem$Prijem~miesto)
+summary(anova)
+
+# p < 0.05 a teda zamietame h0, cize miesto ma statisticky vyznamny dopad na prijem
+
+tpt = TukeyHSD(anova)
+tpt
+plot(tpt)
+
+# na zaklade tukey testu sme zistili ze odlisuju sa
+# obec a okresne mesto
+# obec a krajske mesto
+# male mesto a okresne mesto
+# male mesto a krajske mesto
+
+
+
+```
+# priklad 2
+```{r}
+dieta = read_xlsx("dieta.xlsx")
+
+# kedze nas zaujima percentualny pokles vyratame si percentualnu zmenu vahy pre kazdu osobu
+pokles = dieta$`Váha pred` - dieta$`Váha po`
+pokles = (1- (dieta$`Váha po` / dieta$`Váha pred`)) * 100
+# pokles
+
+boxplot(pokles~dieta$Pohlavie)
+# na zaklade boxplotu viidme ze zeny viac pribrali muzi menej
+# ostatne je podobne
+pohlavie_int = as.integer(factor(dieta$Pohlavie, levels = c("M", "F")))
+t <- data.frame(pohlavie_int,pokles)
+# overime si ci udaje su normalne rodelene
+library("nortest")
+ad.test(dieta$`Váha pred`)
+ad.test(dieta$`Váha po`)
+ad.test(t$pohlavie_int)
+# tapply(dieta$`Váha pred`, dieta$`Váha po`, shapiro.test) toto mi neslo  nechapem preco
+# udaje niesu z normalneho rozdelenie
+
+
+# test ci pohlavie je statisticky vyznamny udaj vzhladom na pokleshmotnosti
+#h0 pohlavie nie je vyznamny udaj voci poklesu hmotnosti
+#h1 pohlavie je vyznamny udaj voci poklesu hmotnosti
+kruskal.test(pokles ~ pohlavie_int, data = t)
+# p > 0.1 a teda nezaietame h0 a teda na pohlavii nezalezi v pripade tejto studije vzhladom na stratu hmotnosti
+```
+

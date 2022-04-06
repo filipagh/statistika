@@ -89,3 +89,19 @@ tpt = TukeyHSD(anova_laborant)
 tpt
 plot(tpt)
 ```
+```{r}
+#anova s interakciou
+an2 = aov(data$deg~laborant+pristroj+laborant*pristroj)
+summary(an2)
+TukeyHSD(an2)
+plot(TukeyHSD(an2))
+deg = data$deg
+
+boxplot(data$deg~data$laborant)
+boxplot(data$deg~data$pristroj)
+# pomoc = data.frame(vzdelanie,prijem)
+# ggline(pomoc,x="vzdelanie",y="prijem",add=c("mean_se","jitter","violin"))
+
+interaction.plot(laborant,pristroj,deg)
+
+```

@@ -1,0 +1,91 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+# test dobrej zhody
+# pearsonov test
+# 600 hod kocky
+# zisti ci kock aje homogena
+
+d1 = c(122,61,98,115,79,125)
+test = chisq.test(d1)
+test
+# p hodnota je skoro nula, zamietam zhodu s rvnomernm rozdelenim
+# kocka nie je homogena
+
+
+#pocas 100 dni sme sledovali pocty roztrhnuti vlakien na pletaciom stroji po generlnej oprave
+# roztrhnutia vlakien sa riadia poissonovym rozdelenim
+# so strednou hodnotou lambda = 3
+
+
+```
+```{r}
+#kolmogorov smirov test dobrej zhody
+# zname spojite rozdelenie, parametre pozname
+
+# pri testovani meracieho pristroa sme 30x opakovaly meranie rozmeru suciastky s realnov velkostou 20,1
+# vyrobca garantuje ze meraci pristroj ma smerodajnu odchylku 0.9
+d1 <- c(19.32, 19.57, 19.08, 20.87, 19.9, 18.92, 20.98, 20.18,
+        20.67, 18.87, 21.69, 19.9, 19.16, 20.44, 21.68, 21.23,
+        19.44, 19.95, 20.59, 20.62, 21.05, 20,18.96, 22.12, 19.39,
+        19.85, 20.39, 18.93, 20.06,19.2)
+
+ks.test(d1,"pnorm",mean=20.1,sd=0.9)
+#p hodnota je 0.91 nezamietam h0 data su normalne rozdelen
+# graficka alanyza
+boxplot(d1,horizontal = T)
+qqnorm(d1,datax = T)
+qqnorm(d1)
+qqline(d1)
+
+ggqqplot(d1)
+qqPlot(d1)
+
+#histogram empiricka a teoreticka hust
+hist(d1,prob=T, ylim = c(0,0.5))
+lines(density(d1))
+xxx = seq(min(d1)-1,max(d1)+1, 0.01)
+lines(xxx,dnorm(xxx,mean = mean(d1), sd=sd(d1)),col = "red")
+
+
+# dvoj vyberovy
+```
+```{r}
+# dvoj vyberovy ks test
+# ci 2 vybery su rovnako rozdelene
+# certifikovane laboratorium, testuje protilatky, dvoma metodami A, B
+a <- c(0.28, 0.31, 0.27, 0.33, 0.33, 0.29, 0.29, 0.3, 0.31, 0.31, 0.32,
+0.31, 0.3, 0.31, 0.3)
+b <- c(0.24, 0.25, 0.28, 0.27, 0.2, 0.32, 0.13, 0.26, 0.38, 0.24, 0.36,
+       0.31, 0.3, 0.2, 0.26)
+# su tieto metody zamenitelne ???
+
+boxplot(a,b)
+data = data.frame(a,b)
+library("psych")
+multi.hist(data,breaks = 5, dcol = c('blue','red'), bcol = c('yellow','green'))
+ks.test(a,b)
+
+
+
+# p < 0.05 zamietame h0,data niesu rovnomerne rozdelenie
+# shapiro wilkov test
+# overte normalitu prikladu s meracim spristrojom
+shapiro.test(d1)
+LillieTest(d1)
+
+# priklad ks overte zhodu exponencianeho rozdelenia
+# vyrobca tvrdi ze doba zivotnosti je exponencialne so strednou hodnotou 2000,
+ziv<-c(4996,976,294,7302,2420,1006,7654,2973,320,3169,3994,
+3989,2689,2215,391,4966,1959,9167,5365,2377)
+ks.test(ziv,"pexp",1/2000)
+mean(ziv)
+
+
+
+
+
+```
+
