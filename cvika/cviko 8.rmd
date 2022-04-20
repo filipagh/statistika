@@ -1,0 +1,138 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library("randtests")
+# testy nahodnosti, pouzitie v regrenej analyze a analyze CR
+# h0 data su nahodne
+# h1 data niesu nahodne
+# wald wolfovitz test (test serii)
+# linka mhd v rannej spicke prejde trasu priemerne rychlostov 8km/h
+# navrhla sa mala zmena trasy s cielom zvysit rychlost
+# urbilo sa 10 merani
+
+v = c(7.7, 7.8, 8.5, 7.8, 7.9, 9, 7.5, 8.2, 9.3, 8.1)
+runs.test(v,plot = T)
+# p value > 0.05 data su nahodne
+
+#ako vyzeraju alternativy pre test (pre dake ciselne rady)
+runs.test(v,alternative = "right.sided")
+
+#  turning point test
+
+# hypoteza je rovnaka ako hore, tes ale dobre odhaluje periodicitu v datach
+# otestujeme rovnake dat ako hore
+turning.point.test(v)
+# nezamietam h0
+# data su nahodne
+
+# neparametricke testy ako ekvivalent ku parametrickym testom
+# testy su tvrdenia o mediane
+# znamienkovy test (sign test) nekladieme poziadavky na data
+# mozeme testovat aj vyrazne zosikmene subory, test ma malu silu
+# hypoteza
+# h0 media je nejake cislo
+# h0 media nerovna sa nejake cislo
+
+# budeme testovat ci priemerna rychost sa zachovala
+median(v)
+library("BSDA")
+SIGN.test(v,md=8)
+# p hodnota > 0.05, nezamietam hypotezu  o rovnakej priemernej rychlosti
+# ale kedze chceme zvysit rychlost tak aleternativa less
+
+# pri opracovani suciastok do pc sa dosahuju priemerne hodnoty
+# kvalitaticvnej vlastnosti 4.4 zavadza sa eektivnejsia metoda opracovania
+# zmerali sme kvalitaticnu vlastnost pre novy metodu
+# testujt ehypotezu ze kvalitativna vlastnost ostala rovnaka
+
+x = c(4.5, 4.3, 4.1, 4.9, 4.6, 3.6, 4.7, 5.1, 4.8, 4, 3.7, 4.4,
+      4.9, 4.9, 5.2, 5.1, 4.7, 4.9, 4.6, 4.8)
+# zistime symetriu
+boxplot(x,horizontal = T)
+library("moments")
+moments::skewness(x)
+
+SIGN.test(x,md=4.4, )
+# p > 0.05 nezamietam hypotezu o rovnakej vlalitativnej vlastnosti,
+# ak by sme cheli testovat ze nova meoda zlespuje vlastnost
+#
+# alternativa by bola less
+SIGN.test(x,md=4.4,alternative = "less")
+
+# da sa pouzit aj ako parovi test, priklad, ktory bol pri t teste
+
+
+# su dane casi v sekundach ziaci riesili ulohy pred specialnym cvicenim a po specialnom cviceni
+# zlepsili sa ziaci v pamatovom pocitani?
+
+pred <- c(87,61,98,90,93,74,83,72,81,75,83)
+po <- c(50,45,79,90,88,65,52,79,84,61,52)
+
+SIGN.test(pred,po,alternative = "less")
+
+boxplot(pred,po)
+
+
+# jednovyberovy wilcoxonov test o strednej hodnote, testujeme median
+# mozeme pouzit aj ako parovy test vyzaduje symetriu
+# 12 pokisnych osob malo nezavisle od  seba odhadnut kedy od daneho signalu uplinie 1 minuta,
+# doterajsie vyskumy potvrzduju symetriu  omylu, W testom testujte ze sledovane osoby maju dobry odhad intervalu (median=60)
+
+y<-c(53,48,64,45,55,63,51,66,56,54,62,58)
+skewness(y)
+boxplot(y,horizontal = T)
+wilcox.test(y,mu=60)
+# p hodnota > 0.05 osoby vedia odhadnut dlzky casoveho intervalu
+
+# priklad o pamatovim pocitanim rieste wilconxonovym tesotm
+wilcox.test(pred,po,alternative = "less")
+
+# dvojvyberovy wilconoxnov tes
+# neparametricka alternativ ak neparovemu t testu
+
+# z produkcie 2 firiem n= 10 a  m=8
+# nezavisli experti hodnotili kvalitu  pridelenim bodov
+# testujte ze ich kvalitativne vlastnosti su rovnake
+x<-c(420,560,600,490,550,570,340,480,510,460)
+y<-c(400,420,580,470,470,500,520,530)
+boxplot(x,y)
+# podobnost je este overime rovnost disperzii lebo 1. ma vacsiu disperziu,
+# overime statisticky vyznamne
+library("lawstat")
+df1 = data.frame("Body" = c(x,y), "Firma"= rep(c(1,2),times=c(10,8)))
+levene.test(df1$Body,df1$Firma)
+
+# p > 0.05 nezamieta hyptezu o rovnosti disperzii
+
+wilcox.test(x,y)
+# p > 0.05 nezamietam hypotezu o rovnosti a teda pre nas rovnosti medianov kvlaitativne vlastnosti vyrobkovdvoch firiem su rovnake
+# kruskal wallisov test neparametricky
+
+# testujeme rovnost medianov ale v skustocnosti je hypoteza o rovnosti distribucnych funkcii
+# data treba faktoriazovat ako anova
+# zaznamenali sme vykony strojov troch znaciek testujte hypotezu ze vykony su rovnake, ze faktor druh znacky je nolovy
+
+data<-data.frame("vykon"=c(53,47,46,61,55,52,58,54,51,51,49,54), "stroj"=c(rep(1,3),rep(2,5),rep(3,4)))
+
+data$stroj <- factor(data$stroj)
+boxplot(data$vykon~data$stroj)
+
+
+kruskal.test(data$vykon,data$stroj)
+# p hodnota < 0.05 zamietam hypotezu o rovnosti vykonov, faktor znakcka stroje je nenulovy
+library("dunn.test")
+dunn.test(data$vykon,data$stroj)
+dunn.test(data$vykon,data$stroj,altp = T,list = T)
+
+
+
+
+
+
+
+
+
+```
+
