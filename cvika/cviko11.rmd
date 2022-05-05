@@ -1,0 +1,141 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+# disky
+x <- c(160, 250, 320, 500, 750, 900,1000, 1500, 2000)
+y <- c(789, 800, 851, 874, 1193,1200, 1335, 1704, 2073)
+
+# priehyb dosky
+xx <- 1:10
+yy <- c(2.1299, 2.1532, 2.1611, 2.151, 2.1282, 2.0807, 2.0266, 1.9594,
+1.8759, 1.7723)
+
+# umrtia v Londyne
+zz <- c(112, 140, 143, 120, 196, 294, 513, 518, 430, 274, 255, 236, 256,
+222, 213)
+xx <- c(0.3, 0.49, 0.61, 0.49, 2.64, 3.45, 4.46, 4.46, 1.22, 1.22, 0.32,
+0.29, 0.5, 0.32, 0.32)
+yy <- c(0.09, 0.16, 0.22, 0.14, 0.75, 0.86, 1.34, 1.34, 0.47, 0.47,
+0.22, 0.23, 0.26, 0.16, 0.16)
+
+# regresna analyza
+# ak korelacne oeficienty preukazali vysok mieru zavislosti tak zavislost, tak sa snazime popisat regresnou funkciou
+library(car)
+library(carData)
+library(ggplot2)
+
+# mame dvojice merani a cena pevnych diskov - Y a ich kapacitu X
+# zratajte aspon 1 koleracny koeficient interpretujte, prelozte vhodnu regresnu funkciu, v nasom pripade priamku
+cor(x,y)
+plot(x,y, type = "b", xlab = "kapacita", ylab = "cena")
+xy= data.frame(x,y)
+ggplot(xy,aes(x=x,y=y))+geom_point()+stat_smooth(method = "lm")
+lr1 = lm(y~x)
+lr1
+plot(x,y,type = "b", xlab = "kapacita", ylab = "cena")
+abline(lr1,col="red")
+text(1500,900,"609.6+0.72x")
+
+summary(lr1)
+# analyza rezidiu - neskor
+# tabulka pre odhadnute parametre, testy kypotez pre tieto parametre, lerevantne len, ak su rezidua normalne rozdelene
+
+# vzdy nulova hypoteza je ze parameter je rovny nule
+# bazobu funkcia nepatri mezdu bazove, koeficient pri nej je nulovy
+
+# zaver z tabulky aj konstanta aj linearny clen patri medzi bazove factory
+# r squared  cim blizsie 1 tym lepsie
+
+# vztahy mezdy xc a y popisuje nasa regresna funkcia
+# posledny test anova test h0 model=konst nieje treba
+# modelovat nasou regresnou funkcoiu, ak zamietnem h0 tak model je vhodny, zratali sa aj nie char. neskor vyuzijeme
+# dore je vypisat AIC BIC ak porovname viac model, tak ajlepsi je ten s najmensim inf krit
+
+AIC(lr1)
+
+lr2 = lm(y~0+x)
+abline(lr2,col="green")
+AIC(lr1,lr2)
+summary(lr2)
+lr1$fitted.values
+new=data.frame(x=c(100,200,300))
+predict(lr1,new)
+###########################################
+# v 10 vzdialenostiach sa maria velkost priehybu
+# zatazeia dosky prelozte vhodn regresnu krivku
+plot(xx,yy,type = "b", xlab = "vzdialenost", ylab = "priehyb")
+lr3 <- lm(yy~poly(xx,2))
+lr3
+lines(xx,fitted(lr3)[xx],col = "red")
+################################
+# transformacia na linearnu regresiu
+# barometricky tlak -p-y zavisi exponencialne od nadmorskej vysky
+# -h
+# $p=a*exp^(b*h)
+
+
+# barometricky tlak
+h <- c(0,270,840,1452,2116,3203)
+p <- c(100000,96974,90263, 83553,76842,66842)
+plot(h,p,type= "b")
+lr4 = lm(log(p)~h)
+lr4
+b = lr4$coefficients[2]
+b
+a = exp(lr4$coefficients[1])
+a
+lines(h,a*exp(b*h),col="red")
+#regresia s viac nezavislymi premennymi, data z R marketing
+library(datarium)
+head(marketing)
+pairs(marketing)
+# porovnana kazda dvojica
+par(mfrow=c(2,2))
+plot(sales~.,marketing)
+library(corrplot)
+k = cor(marketing)
+corrplot.mixed(k)
+lr5 = lm(sales~.,marketing)
+lr5
+summary(lr5)
+lr6 = lm(sales~youtube+facebook,marketing)
+lr6
+summary(lr6)
+AIC(lr5,lr6)
+
+lm.fit = step(lr5)
+summary(lm.fit)
+plot(lm.fit)
+
+
+#######################
+library(leaps)
+regfit.full = regsubsets(sales~.,marketing,nbest=3)
+summary(regfit.full)
+summary(regfit.full)$bic
+
+
+#################################
+# analyza rezidui pre model lr5
+
+plot(lr5)
+
+par(mflow=c(1,1))
+residualPlot(lr5)
+residualPlots(lr5)
+
+rezy = lr5$residuals
+shapiro.test(rezy)
+library(randtests)
+turning.point.test(rezy)
+durbinWatsonTest(lr5)
+
+# nieje normalne rozdelene
+
+
+
+
+```
+
