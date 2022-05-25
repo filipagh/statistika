@@ -1,0 +1,137 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+
+# doplnok regresna analyza vplyve body regresie
+# priklad
+# tabulka reprezentuje cenu disku a ich kapacitu
+# zratajte vsetky korelacne koeficienty prelozte vhodnu regresnu krivku. zacneme priamkov
+
+# disky
+x <- c(160, 250, 320, 500, 750, 900,1000, 1500, 2000)
+y <- c(789, 800, 851, 874, 1193,1200, 1335, 1704, 2073)
+lr1 <- lm(y~x)
+summary(lr1)
+library(olsrr)
+olsrr::ols_plot_cooksd_bar(lr1)
+olsrr::ols_plot_cooksd_chart(lr1) # niesu vplyvne
+olsrr::ols_plot_dfbetas(lr1)
+olsrr::ols_plot_resid_stand(lr1)
+olsrr::ols_plot_resid_stud(lr1)
+olsrr::ols_plot_resid_stud_fit(lr1)
+# stvrte mozeme vyhodit, prepocitat regresiu
+# pozriet charakteristiku , kef, detrminacia a informacne krit. vybrat podla lepsich ukazovatelov opatrene ak malo merani
+
+
+# logisticka regresia
+# sledujjeme dva znaky plroblem so splacanim pozicky
+# ma y=1 a nema y=0 a vzdelanie 1 - vs , 0 - ostatne
+# modelujeme P(Y=1) teda prelozte logisticku regresiu s nezavuislou premenou
+library(readxl)
+banka <- read_xlsx('/home/filipa/IdeaProjects/stat/cvika/banka.xlsx')
+logit1 = glm(problem~.,data=banka,family = binomial)
+summary(logit1)
+b0 = logit1$coefficients[1]
+b1 = logit1$coefficients[2]
+xx = seq(0,1,0.1)
+yy = 1/(1+exp(b0+b1*xx))
+plot(problem~vzdelanie,data = banka)
+lines(xx,yy)
+
+# priklad 2
+# data su zo stranky kaggle spolocnosti google ak sa zaregistrujete tak mate pristup k roznym datam
+# my budeme pouzivat dataset
+# pima indians daiabetes
+library(mlbench)
+
+data("PimaIndiansDiabetes2")
+PimaIndiansDiabetes2
+library(Amelia) # praca s chybajucimi udajmi
+missmap(PimaIndiansDiabetes2)
+dd <- na.omit(PimaIndiansDiabetes2)
+str(dd)
+# my si pouzijeme nase data
+diab = read.csv('/home/filipa/IdeaProjects/stat/cvika/diabetes.csv')
+missing(diab)
+str(diab)
+# nejake vizualizacie
+pairs(diab)
+boxplot(diab)
+par(mfrow=c(2,4))
+for (i in 1:8) {
+  boxplot(diab[,i], main=names(diab)[i])
+}
+pimamodel <- glm(Outcome~.,data=diab,family = binomial)
+summary(pimamodel)
+probs = predict(pimamodel,type = "response")
+probs
+# cut point nech je 0.5 roztriedime
+pred = ifelse(probs>0.5,1,0)
+
+table(pred,diab$Outcome)
+
+# hodnotenie kvaliti ca pomoci ROC a AUC
+library(ROCR)
+p = predict(pimamodel,diab,type = "response")
+pr = prediction(p,diab$Outcome)
+pr
+prf = performance(pr,"tpr","fpr")
+par(mfrow=c(1,1))
+plot(prf)
+plot(prf,colorize=T)
+auc = performance(pr,"auc")
+auc
+auc@y.values
+
+library(ROCit)
+roc = rocit(score = p,class = diab$Outcome)
+roc
+plot(roc)
+######################
+# zhlukova anayza
+# objekty delime do skupin na zaklade ich podobnosti kazdyobjekt je iba v jednom zhluku potrebujeme ako podoben, nepodobne
+# su objekty ap reto rataju matice vzdialenosti
+# vypoitaj matice vzdial. pre tri objekty
+
+o1 = c(2,5)
+o2 = c(3,2)
+o3 = c(5,4)
+A = matrix(c(o1,o2,o3), ncol=2,nrow=3,byrow = T)
+dist(A)#euklidovska
+dist(A,method = "maximum") #cebys
+dist(A,method = "binary") #cebys
+
+
+library(car)
+library(carData)
+mtcars
+d1 = mtcars[1:20,1:4]
+dd1 = dist(d1)
+dd1
+# huerarchucke  aglomerativne zhlukovanie, defaul
+# je metoda najzvd. suseda
+k1 = hclust(dd1)
+plot(k1)
+k2 = hclust(dd1,"ave")
+plot(k2)
+# nestihneme reisit optimalny pocet zhlukov
+# pozri dok.server. majme tri
+
+library(sparcl)
+rect.hclust(k2,k=3,border = "red")
+
+# jedna nie hierarchicka metoda, urcime dopredu pocet zhlukov
+data <- USArrests
+data
+data = scale(data)
+ckms = kmeans(data,center=3)
+ckms
+library(factoextra)
+fviz_cluster(ckms,data=data)
+
+
+
+```
+

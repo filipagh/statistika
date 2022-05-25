@@ -1,0 +1,119 @@
+---
+title: "zapocet"
+author: "Filip Agh"
+output: html_notebook
+---
+```{r}
+library(readxl)
+library(DescTools)
+library(RColorBrewer)
+library(ggplot2)
+library(ggpubr)
+library(vioplot)
+library(EnvStats)
+
+p4 = read_xlsx("/home/filipa/IdeaProjects/stat/cvika/p4.xlsx")
+p5 = read_xlsx("/home/filipa/IdeaProjects/stat/cvika/p5.xlsx")
+p5
+```
+# priklad 1
+```{r}
+#pocetnost
+table(p5$opotrebenie)
+#relativna pocetnost
+table(p5$opotrebenie)/length(p5$opotrebenie)
+# sumar
+summary(p5)
+# sikmost
+skewness(p5$opotrebenie)
+# normalne rozdelenie ma sikmost 0 tak nieje mu podobne
+# spicatost
+kurtosis(p5$opotrebenie)
+# normalne rozdelenie ma sikmost 3 tak nieje mu podobne
+
+hist(p5$opotrebenie)
+hist(subset(p5$opotrebenie, p5$miesto == "1"))
+hist(subset(p5$opotrebenie, p5$miesto == "2"))
+hist(subset(p5$opotrebenie, p5$miesto == "3"))
+
+boxplot(p5$opotrebenie)
+boxplot(p5$opotrebenie~p5$miesto)
+vioplot(p5$opotrebenie)
+vioplot(p5$opotrebenie~p5$miesto)
+
+# data ako celok neobsahuju vybocujuce hodnoty
+# data separvane podla miesta obsahuju vybocujuce hodnoty
+
+
+
+
+```
+
+# priklad 2
+```{r}
+# overenie ci su data normlane rozdelene
+# h0 su normalne rozdelene
+# h1 nie su normalne rozdelene
+shapiro.test(p5$opotrebenie)
+# p hodnota je > 0.05 a teda nezamietame hypotezu o normalnom rozdeleni dat
+# interval spolahlivosti pre strednu hodnotu na urovni 90%
+t.test(p5$opotrebenie,conf.level = 0.9)$conf.int;
+# interval spolahlivosti pre strednu hodnotu pravostrannu na urovni 90%
+t.test(p5$opotrebenie,conf.level = 0.9,alternative = "l")$conf.int;
+
+# interval spolahlivosti pre disperziu na urovni 90%
+varTest(p5$opotrebenie,conf.level = 0.9)$conf.int;
+# interval spolahlivosti pre disperziu pravostrann na urovni 90%
+varTest(p5$opotrebenie,conf.level = 0.9, alternative = "l")$conf.int;
+
+```
+#priklad 3
+```{r}
+# h0 su normalne rozdelene
+# h1 nie su normalne rozdelene
+shapiro.test(p5$opotrebenie)
+# je normalne rozdelene
+ZTest(p5$opotrebenie,mu = 80,sd_pop = 10^2,alternative = "g")
+# phodnota je <0.05 a teda nezamietam hypotezu ze s specialnym pripravkom dosahujeme lepsie vysledky (premer je 73.56bodov)
+
+```
+
+# priklad 4
+
+```{r}
+library(randtests)
+runs.test(p5$opotrebenie)
+# phodnota > 0.05 a teda nezamietam hypotezu o nahodnosti dat
+
+```
+
+# priklad 5
+
+```{r}
+# h0 su normalne rozdelene
+# h1 nie su normalne rozdelene
+shapiro.test(p5$opotrebenie)
+# je normalne rozdelene
+miesto = factor(p5$miesto)
+# h0 su normalne rozdelene
+# h1 nie su normalne rozdelene
+tapply(p5$opotrebenie,p5$miesto,shapiro.test)
+# su normalne rozdelene
+#rovnost disperzie v triedach  bartlett test
+# h0 maju rovnaku disperziu
+# h1 nemaju rovnaku disperziu
+bartlett.test(p5$opotrebenie,miesto)
+# disperzie su rovnomerne
+# h0 faktor statisticky vyznamne ovplivnuje hodnoty
+# h1 faktor statisticky vyznamne nie ovplivnuje hodnoty
+anova = aov(p5$opotrebenie~miesto)
+summary(anova)
+# p hodnota > 0.05 a teda miesto nema statisticky vplyv na opotrebenie
+t = TukeyHSD(anova)
+t
+plot(t)
+
+boxplot(p5$opotrebenie~miesto)
+
+# triedy su podobne
+```
